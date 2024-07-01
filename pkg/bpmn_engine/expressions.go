@@ -1,6 +1,7 @@
 package bpmn_engine
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/antonmedv/expr"
@@ -19,9 +20,14 @@ func evaluateExpression(expression string, variableContext map[string]interface{
 	expression = strings.TrimPrefix(expression, "=")
 	program, err := expr.Compile(expression, exprOptions...)
 	if err != nil {
+		fmt.Printf("expr compile error: %v (expression: %v)\n", err, expression)
 		return nil, err
 	}
-	return expr.Run(program, variableContext)
+	ret, err := expr.Run(program, variableContext)
+	if err != nil {
+		fmt.Printf("expr run error: %v (expression: %v)\n", err, expression)
+	}
+	return ret, err
 }
 
 func evaluateLocalVariables(varHolder *var_holder.VariableHolder, mappings []extensions.TIoMapping) error {
