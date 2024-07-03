@@ -34,6 +34,10 @@ func (vh *VariableHolder) SetVariable(key string, val interface{}) {
 	vh.variables[key] = val
 }
 
+func (vh *VariableHolder) DeleteVariable(key string) {
+	delete(vh.variables, key)
+}
+
 // PropagateVariable set a value with given key to the parent VariableHolder
 func (vh *VariableHolder) PropagateVariable(key string, value interface{}) {
 	if vh.parent != nil {

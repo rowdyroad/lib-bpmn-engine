@@ -48,6 +48,9 @@ type ActivatedJob interface {
 	// SetVariable in the variables context of the given process instance
 	SetVariable(key string, value interface{})
 
+	// DeleteVariable in the variables context of the given process instance
+	DeleteVariable(key string)
+
 	// InstanceKey get instance key from ProcessInfo
 	InstanceKey() int64
 
@@ -111,6 +114,11 @@ func (aj *activatedJob) Variable(key string) interface{} {
 // SetVariable implements ActivatedJob
 func (aj *activatedJob) SetVariable(key string, value interface{}) {
 	aj.variableHolder.SetVariable(key, value)
+}
+
+// DeleteVariable implements ActivatedJob
+func (aj *activatedJob) DeleteVariable(key string) {
+	aj.variableHolder.DeleteVariable(key)
 }
 
 // Fail implements ActivatedJob
