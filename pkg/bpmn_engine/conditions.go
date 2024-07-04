@@ -1,6 +1,7 @@
 package bpmn_engine
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -45,7 +46,7 @@ func exclusivelyFilterByConditionExpression(flows []BPMN20.TSequenceFlow, variab
 	if len(ret) == 0 {
 		return nil, &ExpressionEvaluationError{
 			Msg: fmt.Sprintf("No default flow, nor matching expressions found, for flow elements: %s", flowIds.String()),
-			Err: nil,
+			Err: errors.New("no default flow, nor matching expressions found"),
 		}
 	}
 	return ret, nil
