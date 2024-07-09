@@ -98,6 +98,33 @@ func (state *BpmnEngineState) CreateAndRunInstanceById(processId string, variabl
 	return instance, state.run(instance)
 }
 
+func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
+	count := 0
+	for i, pi := range state.processInstances {
+		if pi.ProcessInfo.ProcessKey == instance.ProcessInfo.ProcessKey {
+			count++
+		}
+		if pi.InstanceKey == instance.InstanceKey {
+			for j := i; j < len(state.processInstances)-1; j++ {
+				state.processInstances[j] = state.processInstances[j+1]
+			}
+			state.processInstances = state.processInstances[:len(state.processInstances)-1]
+			count--
+		}
+	}
+	if count == 0 {
+		for i, pi := range state.processes {
+			if pi.ProcessKey == instance.ProcessInfo.ProcessKey {
+				for j := i; j < len(state.processes)-1; j++ {
+					state.processes[j] = state.processes[j+1]
+				}
+				state.processes = state.processes[:len(state.processes)-1]
+				break
+			}
+		}
+	}
+}
+
 // CreateAndRunInstance creates a new instance and executes it immediately.
 // The provided variableContext can be nil or refers to a variable map,
 // which is provided to every service task handler function.
@@ -125,6 +152,12 @@ func (state *BpmnEngineState) RunOrContinueInstance(processInstanceKey int64) (*
 }
 
 func (state *BpmnEngineState) run(instance *processInstanceInfo) (err error) {
+	defer func() {
+		if instance.State == Completed || instance.State == Failed {
+			state.gc(instance)
+		}
+	}()
+
 	process := instance.ProcessInfo
 	var commandQueue []command
 
