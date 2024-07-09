@@ -1,5 +1,7 @@
 package var_holder
 
+import "encoding/json"
+
 type VariableHolder struct {
 	parent    *VariableHolder
 	variables map[string]interface{}
@@ -48,4 +50,12 @@ func (vh *VariableHolder) PropagateVariable(key string, value interface{}) {
 // Variables return all variables within this holder
 func (vh *VariableHolder) Variables() map[string]interface{} {
 	return vh.variables
+}
+
+func (m *VariableHolder) MarshalJSON() ([]byte, error) {
+	return json.Marshal(m.variables)
+}
+
+func (m *VariableHolder) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &m.variables)
 }
