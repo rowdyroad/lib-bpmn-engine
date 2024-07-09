@@ -105,16 +105,38 @@ func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
 			count++
 		}
 		if pi.InstanceKey == instance.InstanceKey {
+			//todo: optimize if ordering is not significant
 			for j := i; j < len(state.processInstances)-1; j++ {
 				state.processInstances[j] = state.processInstances[j+1]
 			}
 			state.processInstances = state.processInstances[:len(state.processInstances)-1]
+			for k, ms := range state.messageSubscriptions {
+				if ms.ProcessInstanceKey == instance.InstanceKey {
+					//todo: optimize if ordering is not significant
+					for j := k; j < len(state.messageSubscriptions)-1; j++ {
+						state.messageSubscriptions[j] = state.messageSubscriptions[j+1]
+					}
+					state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-1]
+					break
+				}
+			}
+			for k, t := range state.timers {
+				if t.ProcessInstanceKey == instance.InstanceKey {
+					//todo: optimize if ordering is not significant
+					for j := k; j < len(state.timers)-1; j++ {
+						state.timers[j] = state.timers[j+1]
+					}
+					state.timers = state.timers[:len(state.timers)-1]
+					break
+				}
+			}
 			count--
 		}
 	}
 	if count == 0 {
 		for i, pi := range state.processes {
 			if pi.ProcessKey == instance.ProcessInfo.ProcessKey {
+				//todo: optimize if ordering is not significant
 				for j := i; j < len(state.processes)-1; j++ {
 					state.processes[j] = state.processes[j+1]
 				}
