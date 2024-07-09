@@ -345,16 +345,16 @@ func recoverProcessInstanceActivitiesPart2(state *BpmnEngineState) {
 // ----------------------------------------------------------------------------
 
 func recoverProcessInstances(state *BpmnEngineState) error {
+	activeList := make([]*processInstanceInfo, 0, len(state.processInstances))
 	for i, pi := range state.processInstances {
-		process := state.findProcess(pi.ProcessInfo.ProcessKey)
-		if process == nil {
-			msg := fmt.Sprintf("Can't find process key %d in current BPMN Engine's processes", pi.ProcessInfo.ProcessKey)
-			return &BpmnEngineUnmarshallingError{
-				Msg: msg,
+		if process := state.findProcess(pi.ProcessInfo.ProcessKey); process != nil {
+			state.processInstances[i].ProcessInfo = process
+			if state.processInstances[i].State == Ready || state.processInstances[i].State == Active {
+				activeList = append(activeList, state.processInstances[i])
 			}
 		}
-		state.processInstances[i].ProcessInfo = process
 	}
+	state.processInstances = activeList
 	return nil
 }
 
