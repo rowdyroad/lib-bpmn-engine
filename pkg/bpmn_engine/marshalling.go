@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/nitram509/lib-bpmn-engine/pkg/bpmn_engine/var_holder"
 	"github.com/nitram509/lib-bpmn-engine/pkg/spec/BPMN20"
 )
 
@@ -355,7 +354,6 @@ func recoverProcessInstances(state *BpmnEngineState) error {
 			}
 		}
 		state.processInstances[i].ProcessInfo = process
-		state.processInstances[i].VariableHolder = var_holder.New(nil, nil)
 	}
 	return nil
 }
