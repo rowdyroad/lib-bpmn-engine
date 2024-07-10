@@ -23,7 +23,9 @@ type BpmnEngineUnmarshallingError struct {
 }
 
 func (e *BpmnEngineUnmarshallingError) Error() string {
-	if len(e.Msg) > 0 {
+	if e.Err == nil {
+		return e.Msg
+	} else if len(e.Msg) > 0 {
 		return e.Msg + ": " + e.Err.Error()
 	}
 	return e.Err.Error()

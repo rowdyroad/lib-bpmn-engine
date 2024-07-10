@@ -98,51 +98,37 @@ func (state *BpmnEngineState) CreateAndRunInstanceById(processId string, variabl
 	return instance, state.run(instance)
 }
 
-func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
-	count := 0
+func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 	for i, pi := range state.processInstances {
-		if pi.ProcessInfo.ProcessKey == instance.ProcessInfo.ProcessKey {
-			count++
-		}
 		if pi.InstanceKey == instance.InstanceKey {
-			//todo: optimize if ordering is not significant
-			for j := i; j < len(state.processInstances)-1; j++ {
-				state.processInstances[j] = state.processInstances[j+1]
-			}
+			state.processInstances[i], state.processInstances[len(state.processInstances)-1] = state.processInstances[len(state.processInstances)-1], state.processInstances[i]
 			state.processInstances = state.processInstances[:len(state.processInstances)-1]
-			for k, ms := range state.messageSubscriptions {
+			k := 0
+			for j, ms := range state.messageSubscriptions {
 				if ms.ProcessInstanceKey == instance.InstanceKey {
-					//todo: optimize if ordering is not significant
-					for j := k; j < len(state.messageSubscriptions)-1; j++ {
-						state.messageSubscriptions[j] = state.messageSubscriptions[j+1]
-					}
-					state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-1]
-					break
+					state.messageSubscriptions[j], state.messageSubscriptions[len(state.messageSubscriptions)-1] = state.messageSubscriptions[len(state.messageSubscriptions)-1], state.messageSubscriptions[j]
+					k++
 				}
 			}
-			for k, t := range state.timers {
+			state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-k]
+			k = 0
+			for j, t := range state.timers {
 				if t.ProcessInstanceKey == instance.InstanceKey {
-					//todo: optimize if ordering is not significant
-					for j := k; j < len(state.timers)-1; j++ {
-						state.timers[j] = state.timers[j+1]
-					}
-					state.timers = state.timers[:len(state.timers)-1]
-					break
+					state.timers[j], state.timers[len(state.timers)-1] = state.timers[len(state.timers)-1], state.timers[j]
+					k++
 				}
 			}
-			count--
+			state.timers = state.timers[:len(state.timers)-k]
+			break
 		}
 	}
-	if count == 0 {
-		for i, pi := range state.processes {
-			if pi.ProcessKey == instance.ProcessInfo.ProcessKey {
-				//todo: optimize if ordering is not significant
-				for j := i; j < len(state.processes)-1; j++ {
-					state.processes[j] = state.processes[j+1]
-				}
-				state.processes = state.processes[:len(state.processes)-1]
-				break
-			}
+}
+
+func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
+	state.removeProcess(instance)
+	for i, process := range state.processInstances {
+		if process.ProcessInfo.ProcessKey == instance.ProcessInfo.ProcessKey {
+			state.removeProcess(state.processInstances[i])
 		}
 	}
 }
