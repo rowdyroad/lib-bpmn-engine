@@ -9,7 +9,7 @@ import (
 // FIXME: shall this be exported?
 type processInstanceInfo struct {
 	ProcessInfo    *ProcessInfo              `json:"-"`
-	InstanceKey    int64                     `json:"ik"`
+	InstanceKey    int64                     `json:"ik,string"`
 	VariableHolder var_holder.VariableHolder `json:"vh,omitempty"`
 	CreatedAt      time.Time                 `json:"c"`
 	State          ActivityState             `json:"s"`

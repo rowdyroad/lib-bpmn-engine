@@ -9,9 +9,9 @@ import (
 
 type MessageSubscription struct {
 	ElementId          string        `json:"id"`
-	ElementInstanceKey int64         `json:"ik"`
-	ProcessKey         int64         `json:"pk"`
-	ProcessInstanceKey int64         `json:"pik"`
+	ElementInstanceKey int64         `json:"ik,string"`
+	ProcessKey         int64         `json:"pk,string"`
+	ProcessInstanceKey int64         `json:"pik,string"`
 	Name               string        `json:"n"`
 	MessageState       ActivityState `json:"s"`
 	CreatedAt          time.Time     `json:"c"`

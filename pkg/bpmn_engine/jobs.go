@@ -10,9 +10,9 @@ import (
 
 type job struct {
 	ElementId          string        `json:"id"`
-	ElementInstanceKey int64         `json:"ik"`
-	ProcessInstanceKey int64         `json:"pik"`
-	JobKey             int64         `json:"jk"`
+	ElementInstanceKey int64         `json:"ik,string"`
+	ProcessInstanceKey int64         `json:"pik,string"`
+	JobKey             int64         `json:"jk,string"`
 	JobState           ActivityState `json:"s"`
 	CreatedAt          time.Time     `json:"c"`
 	baseElement        *BPMN20.BaseElement

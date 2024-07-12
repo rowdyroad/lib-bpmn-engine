@@ -22,7 +22,7 @@ type serializedBpmnEngine struct {
 
 type processInfoReference struct {
 	BpmnProcessId    string `json:"id"`           // The ID as defined in the BPMN file
-	ProcessKey       int64  `json:"pk"`           // The engines key for this given process with version
+	ProcessKey       int64  `json:"pk,string"`    // The engines key for this given process with version
 	BpmnData         string `json:"d"`            // the raw BPMN XML data
 	BpmnResourceName string `json:"rn,omitempty"` // the resource's name
 	BpmnChecksum     string `json:"crc"`          // internal checksum to identify different versions
@@ -30,7 +30,7 @@ type processInfoReference struct {
 
 type ProcessInstanceInfoAlias processInstanceInfo // FIXME: don't export
 type processInstanceInfoAdapter struct {
-	ProcessKey       int64              `json:"pk"`
+	ProcessKey       int64              `json:"pk,string"`
 	ActivityAdapters []*activityAdapter `json:"a,omitempty"`
 	*ProcessInstanceInfoAlias
 }
@@ -56,7 +56,7 @@ const (
 
 type activityAdapter struct {
 	Type                      activityAdapterType `json:"t"`
-	Key                       int64               `json:"k"`
+	Key                       int64               `json:"k,string"`
 	State                     ActivityState       `json:"s"`
 	ElementReference          string              `json:"e"`
 	Parallel                  bool                `json:"p,omitempty"` // from gatewayActivity
@@ -67,7 +67,7 @@ type activityAdapter struct {
 // activitySurrogate only exists to have a simple way of marshalling originActivities in MessageSubscription and Timer
 // TODO see issue https://github.com/nitram509/lib-bpmn-engine/issues/190
 type activitySurrogate struct {
-	ActivityKey        int64         `json:"k"`
+	ActivityKey        int64         `json:"k,string"`
 	ActivityState      ActivityState `json:"s"`
 	ElementReferenceId string        `json:"e"`
 	elementReference   *BPMN20.BaseElement

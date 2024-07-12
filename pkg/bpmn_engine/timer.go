@@ -14,9 +14,9 @@ import (
 // The TimerState is one of [ TimerCreated, TimerTriggered, TimerCancelled ]
 type Timer struct {
 	ElementId          string        `json:"id"`
-	ElementInstanceKey int64         `json:"ik"`
-	ProcessKey         int64         `json:"pk"`
-	ProcessInstanceKey int64         `json:"pik"`
+	ElementInstanceKey int64         `json:"ik,string"`
+	ProcessKey         int64         `json:"pk,string"`
+	ProcessInstanceKey int64         `json:"pik,string"`
 	TimerState         TimerState    `json:"s"`
 	CreatedAt          time.Time     `json:"c"`
 	DueAt              time.Time     `json:"da"`
