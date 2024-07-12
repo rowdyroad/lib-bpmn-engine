@@ -126,10 +126,15 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 
 func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
 	state.removeProcess(instance)
-	for i, process := range state.processInstances {
-		if process.ProcessInfo.ProcessKey == instance.ProcessInfo.ProcessKey {
-			state.removeProcess(state.processInstances[i])
+	indexes := make([]int, 0, 1)
+	for i, process := range state.processes {
+		if process.ProcessKey == instance.ProcessInfo.ProcessKey {
+			indexes = append(indexes, i)
 		}
+	}
+	if len(indexes) == 1 {
+		state.processes[indexes[0]], state.processes[len(state.processes)-1] = state.processes[len(state.processes)-1], state.processes[indexes[0]]
+		state.processes = state.processes[:len(state.processes)-1]
 	}
 }
 
