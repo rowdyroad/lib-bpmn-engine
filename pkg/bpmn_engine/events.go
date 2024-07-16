@@ -140,9 +140,9 @@ func (state *BpmnEngineState) createMessageSubscription(instance *processInstanc
 }
 
 func (state *BpmnEngineState) findMessagesByProcessKey(processKey int64) *[]BPMN20.TMessage {
-	for _, p := range state.processes {
+	for i, p := range state.processes {
 		if p.ProcessKey == processKey {
-			return &p.definitions.Messages
+			return &state.processes[i].definitions.Messages
 		}
 	}
 	return nil
