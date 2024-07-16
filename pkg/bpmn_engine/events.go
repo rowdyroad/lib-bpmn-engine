@@ -94,6 +94,9 @@ func (state *BpmnEngineState) handleIntermediateMessageCatchEvent(process *Proce
 	}
 
 	messages := state.findMessagesByProcessKey(process.ProcessKey)
+	if messages == nil {
+		return false, ms, err
+	}
 	caughtEvent := findMatchingCaughtEvent(messages, instance, ice)
 
 	if caughtEvent != nil {
@@ -140,9 +143,9 @@ func (state *BpmnEngineState) createMessageSubscription(instance *processInstanc
 }
 
 func (state *BpmnEngineState) findMessagesByProcessKey(processKey int64) *[]BPMN20.TMessage {
-	for i, p := range state.processes {
+	for _, p := range state.processes {
 		if p.ProcessKey == processKey {
-			return &state.processes[i].definitions.Messages
+			return &p.definitions.Messages
 		}
 	}
 	return nil
