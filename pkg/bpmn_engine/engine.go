@@ -103,33 +103,31 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 		if pi.InstanceKey == instance.InstanceKey {
 			state.processInstances[i], state.processInstances[len(state.processInstances)-1] = state.processInstances[len(state.processInstances)-1], state.processInstances[i]
 			state.processInstances = state.processInstances[:len(state.processInstances)-1]
-
-			k := 0
-			for j, ms := range state.messageSubscriptions {
+			for j := 0; j < len(state.messageSubscriptions); {
+				ms := state.messageSubscriptions[j]
 				if ms.ProcessInstanceKey == instance.InstanceKey {
 					state.messageSubscriptions[j], state.messageSubscriptions[len(state.messageSubscriptions)-1] = state.messageSubscriptions[len(state.messageSubscriptions)-1], state.messageSubscriptions[j]
-					k++
+					state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-1]
+				} else {
+					j++
 				}
 			}
-			state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-k]
-
-			k = 0
-			for j, t := range state.timers {
+			for j := 0; j < len(state.timers); {
+				t := state.timers[j]
 				if t.ProcessInstanceKey == instance.InstanceKey {
 					state.timers[j], state.timers[len(state.timers)-1] = state.timers[len(state.timers)-1], state.timers[j]
-					k++
+					state.timers = state.timers[:len(state.timers)-1]
+				} else {
+					j++
 				}
 			}
-			state.timers = state.timers[:len(state.timers)-k]
-
-			k = 0
-			for j, jb := range state.jobs {
+			for j := 0; j < len(state.jobs); {
+				jb := state.jobs[j]
 				if jb.ProcessInstanceKey == instance.InstanceKey {
 					state.jobs[j], state.jobs[len(state.jobs)-1] = state.jobs[len(state.jobs)-1], state.jobs[j]
-					k++
+					state.jobs = state.jobs[:len(state.jobs)-1]
 				}
 			}
-			state.jobs = state.jobs[:len(state.jobs)-k]
 			break
 		}
 	}

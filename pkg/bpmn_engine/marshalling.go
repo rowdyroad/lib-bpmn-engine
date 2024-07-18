@@ -359,29 +359,30 @@ func recoverProcessInstances(state *BpmnEngineState) error {
 }
 
 func recoverJobs(state *BpmnEngineState) error {
-	for _, j := range state.jobs {
+	for i := 0; i < len(state.jobs); {
+		j := state.jobs[i]
 		pi := state.FindProcessInstance(j.ProcessInstanceKey)
 		if pi == nil {
-			return &BpmnEngineUnmarshallingError{
-				Msg: fmt.Sprintf("can't find process instannce with key %d; "+
-					"the marshalled JSON was likely corrupt", j.ProcessInstanceKey),
-			}
+			state.jobs[i], state.jobs[len(state.jobs)-1] = state.jobs[len(state.jobs)-1], state.jobs[i]
+			state.jobs = state.jobs[:len(state.jobs)-1]
+			continue
 		}
 		definitions := pi.ProcessInfo.definitions
 		element := BPMN20.FindBaseElementsById(&definitions, j.ElementId)[0]
 		j.baseElement = element
+		i++
 	}
 	return nil
 }
 
 func recoverTimers(state *BpmnEngineState) error {
-	for _, t := range state.timers {
+	for i := 0; i < len(state.timers); {
+		t := state.timers[i]
 		pi := state.FindProcessInstance(t.ProcessInstanceKey)
 		if pi == nil {
-			return &BpmnEngineUnmarshallingError{
-				Msg: fmt.Sprintf("can't find process instannce with key %d; "+
-					"the marshalled JSON was likely corrupt", t.ProcessInstanceKey),
-			}
+			state.timers[i], state.timers[len(state.timers)-1] = state.timers[len(state.timers)-1], state.timers[i]
+			state.timers = state.timers[:len(state.timers)-1]
+			continue
 		}
 		t.baseElement = BPMN20.FindBaseElementsById(&pi.ProcessInfo.definitions, t.ElementId)[0]
 		availableOriginActivity := pi.findActivity(t.originActivity.Key())
@@ -392,18 +393,19 @@ func recoverTimers(state *BpmnEngineState) error {
 			originActivitySurrogate.elementReference = BPMN20.FindBaseElementsById(&pi.ProcessInfo.definitions, originActivitySurrogate.ElementReferenceId)[0]
 			t.originActivity = originActivitySurrogate
 		}
+		i++
 	}
 	return nil
 }
 
 func recoverMessageSubscriptions(state *BpmnEngineState) error {
-	for _, ms := range state.messageSubscriptions {
+	for i := 0; i < len(state.messageSubscriptions); {
+		ms := state.messageSubscriptions[i]
 		pi := state.FindProcessInstance(ms.ProcessInstanceKey)
 		if pi == nil {
-			return &BpmnEngineUnmarshallingError{
-				Msg: fmt.Sprintf("can't find process instannce with key %d; "+
-					"the marshalled JSON was likely corrupt", ms.ProcessInstanceKey),
-			}
+			state.messageSubscriptions[i], state.messageSubscriptions[len(state.messageSubscriptions)-1] = state.messageSubscriptions[len(state.messageSubscriptions)-1], state.messageSubscriptions[i]
+			state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-1]
+			continue
 		}
 		ms.baseElement = BPMN20.FindBaseElementsById(&pi.ProcessInfo.definitions, ms.ElementId)[0]
 		availableOriginActivity := pi.findActivity(ms.originActivity.Key())
@@ -414,6 +416,7 @@ func recoverMessageSubscriptions(state *BpmnEngineState) error {
 			originActivitySurrogate.elementReference = BPMN20.FindBaseElementsById(&pi.ProcessInfo.definitions, originActivitySurrogate.ElementReferenceId)[0]
 			ms.originActivity = originActivitySurrogate
 		}
+		i++
 	}
 	return nil
 }
