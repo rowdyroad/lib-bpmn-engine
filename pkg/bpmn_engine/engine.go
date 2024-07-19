@@ -126,6 +126,8 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 				if jb.ProcessInstanceKey == instance.InstanceKey {
 					state.jobs[j], state.jobs[len(state.jobs)-1] = state.jobs[len(state.jobs)-1], state.jobs[j]
 					state.jobs = state.jobs[:len(state.jobs)-1]
+				} else {
+					j++
 				}
 			}
 			break
