@@ -199,6 +199,25 @@ func (e *exporter) updatePosition() {
 	e.position++
 }
 
+func (e *exporter) RemoveProcessEvent(event *bpmnEngineExporter.ProcessInstanceEvent) {
+
+}
+
+func (e *exporter) RemoveProcessInstanceEvent(event *bpmnEngineExporter.ProcessInstanceEvent) {
+
+}
+
+func (e *exporter) RemoveMessageSubscriptionEvent(event *bpmnEngineExporter.ProcessInstanceEvent, elementInfo *bpmnEngineExporter.ElementInfo) {
+
+}
+
+func (e *exporter) RemoveJobEvent(event *bpmnEngineExporter.ProcessInstanceEvent, elementInfo *bpmnEngineExporter.ElementInfo) {
+
+}
+
+func (e *exporter) RemoveTimerEvent(event *bpmnEngineExporter.ProcessInstanceEvent, elementInfo *bpmnEngineExporter.ElementInfo) {
+}
+
 // we need to have a start position, because Zeebe Simple Monitor will filter duplicate events,
 // by identical record IDs. A record ID is composed of 'partitionId' and 'position'.
 // By using a timestamp in millis, we have a useful base figure = for debugging purpose.

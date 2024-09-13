@@ -5,6 +5,11 @@ type EventExporter interface {
 	EndProcessEvent(event *ProcessInstanceEvent)
 	NewProcessInstanceEvent(event *ProcessInstanceEvent)
 	NewElementEvent(event *ProcessInstanceEvent, elementInfo *ElementInfo)
+	RemoveProcessEvent(event *ProcessInstanceEvent)
+	RemoveProcessInstanceEvent(event *ProcessInstanceEvent)
+	RemoveMessageSubscriptionEvent(event *ProcessInstanceEvent, elementInfo *ElementInfo)
+	RemoveJobEvent(event *ProcessInstanceEvent, elementInfo *ElementInfo)
+	RemoveTimerEvent(event *ProcessInstanceEvent, elementInfo *ElementInfo)
 }
 
 type Intent string
@@ -38,4 +43,6 @@ type ElementInfo struct {
 	BpmnElementType string
 	ElementId       string
 	Intent          string // ELEMENT_ACTIVATING || ELEMENT_ACTIVATED || ELEMENT_COMPLETING || ELEMENT_COMPLETED
+	Key             int64
+	InstanceKey     int64
 }

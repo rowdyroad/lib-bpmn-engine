@@ -81,3 +81,74 @@ func (state *BpmnEngineState) exportSequenceFlowEvent(process ProcessInfo, proce
 		exp.NewElementEvent(&event, &info)
 	}
 }
+
+func (state *BpmnEngineState) exportRemoveProcessEvent(process *ProcessInfo) {
+	for _, exp := range state.exporters {
+		exp.RemoveProcessEvent(&exporter.ProcessInstanceEvent{
+			ProcessId:  process.BpmnProcessId,
+			ProcessKey: process.ProcessKey,
+			Version:    process.Version,
+		})
+	}
+}
+
+func (state *BpmnEngineState) exportRemoveProcessInstanceEvent(process *processInstanceInfo) {
+	for _, exp := range state.exporters {
+		exp.RemoveProcessInstanceEvent(&exporter.ProcessInstanceEvent{
+			ProcessId:          process.ProcessInfo.BpmnProcessId,
+			ProcessKey:         process.ProcessInfo.ProcessKey,
+			Version:            process.ProcessInfo.Version,
+			ProcessInstanceKey: process.InstanceKey,
+		})
+	}
+}
+func (state *BpmnEngineState) exportRemoveMessageSubscriptionEvent(process *processInstanceInfo, message *MessageSubscription) {
+	event := exporter.ProcessInstanceEvent{
+		ProcessId:          process.ProcessInfo.BpmnProcessId,
+		ProcessKey:         process.ProcessInfo.ProcessKey,
+		Version:            process.ProcessInfo.Version,
+		ProcessInstanceKey: process.InstanceKey,
+	}
+	info := exporter.ElementInfo{
+		BpmnElementType: message.Name,
+		ElementId:       message.ElementId,
+		Intent:          string(message.MessageState),
+		InstanceKey:     message.ElementInstanceKey,
+	}
+	for _, exp := range state.exporters {
+		exp.RemoveMessageSubscriptionEvent(&event, &info)
+	}
+}
+func (state *BpmnEngineState) exportRemoveJobEvent(process *processInstanceInfo, job *job) {
+	event := exporter.ProcessInstanceEvent{
+		ProcessId:          process.ProcessInfo.BpmnProcessId,
+		ProcessKey:         process.ProcessInfo.ProcessKey,
+		Version:            process.ProcessInfo.Version,
+		ProcessInstanceKey: process.InstanceKey,
+	}
+	info := exporter.ElementInfo{
+		ElementId:   job.ElementId,
+		Intent:      string(job.JobState),
+		InstanceKey: job.ElementInstanceKey,
+		Key:         job.JobKey,
+	}
+	for _, exp := range state.exporters {
+		exp.RemoveJobEvent(&event, &info)
+	}
+}
+func (state *BpmnEngineState) exportRemoveTimerEvent(process *processInstanceInfo, timer *Timer) {
+	event := exporter.ProcessInstanceEvent{
+		ProcessId:          process.ProcessInfo.BpmnProcessId,
+		ProcessKey:         process.ProcessInfo.ProcessKey,
+		Version:            process.ProcessInfo.Version,
+		ProcessInstanceKey: process.InstanceKey,
+	}
+	info := exporter.ElementInfo{
+		ElementId:   timer.ElementId,
+		Intent:      string(timer.TimerState),
+		InstanceKey: timer.ElementInstanceKey,
+	}
+	for _, exp := range state.exporters {
+		exp.RemoveTimerEvent(&event, &info)
+	}
+}

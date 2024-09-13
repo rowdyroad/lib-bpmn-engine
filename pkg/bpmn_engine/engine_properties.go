@@ -37,6 +37,11 @@ func (state *BpmnEngineState) ProcessInstances() []*processInstanceInfo {
 	return state.processInstances
 }
 
+// Processes returns the list of processes
+func (state *BpmnEngineState) Processes() []*ProcessInfo {
+	return state.processes
+}
+
 // FindProcessInstance searches for a given processInstanceKey
 // and returns the corresponding processInstanceInfo, or otherwise nil
 func (state *BpmnEngineState) FindProcessInstance(processInstanceKey int64) *processInstanceInfo {

@@ -22,6 +22,7 @@ type BpmnEngine interface {
 	RunOrContinueInstance(processInstanceKey int64) (*processInstanceInfo, error)
 	Name() string
 	ProcessInstances() []*processInstanceInfo
+	Processes() []*ProcessInfo
 	FindProcessInstance(processInstanceKey int64) *processInstanceInfo
 	FindProcessesById(id string) []*ProcessInfo
 }
@@ -108,6 +109,7 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 				if ms.ProcessInstanceKey == instance.InstanceKey {
 					state.messageSubscriptions[j], state.messageSubscriptions[len(state.messageSubscriptions)-1] = state.messageSubscriptions[len(state.messageSubscriptions)-1], state.messageSubscriptions[j]
 					state.messageSubscriptions = state.messageSubscriptions[:len(state.messageSubscriptions)-1]
+					state.exportRemoveMessageSubscriptionEvent(instance, ms)
 				} else {
 					j++
 				}
@@ -117,6 +119,7 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 				if t.ProcessInstanceKey == instance.InstanceKey {
 					state.timers[j], state.timers[len(state.timers)-1] = state.timers[len(state.timers)-1], state.timers[j]
 					state.timers = state.timers[:len(state.timers)-1]
+					state.exportRemoveTimerEvent(instance, t)
 				} else {
 					j++
 				}
@@ -126,10 +129,12 @@ func (state *BpmnEngineState) removeProcess(instance *processInstanceInfo) {
 				if jb.ProcessInstanceKey == instance.InstanceKey {
 					state.jobs[j], state.jobs[len(state.jobs)-1] = state.jobs[len(state.jobs)-1], state.jobs[j]
 					state.jobs = state.jobs[:len(state.jobs)-1]
+					state.exportRemoveJobEvent(instance, jb)
 				} else {
 					j++
 				}
 			}
+			state.exportRemoveProcessInstanceEvent(pi)
 			break
 		}
 	}
@@ -144,8 +149,10 @@ func (state *BpmnEngineState) gc(instance *processInstanceInfo) {
 		}
 	}
 	if len(indexes) == 1 {
+		cur := state.processes[indexes[0]]
 		state.processes[indexes[0]], state.processes[len(state.processes)-1] = state.processes[len(state.processes)-1], state.processes[indexes[0]]
 		state.processes = state.processes[:len(state.processes)-1]
+		state.exportRemoveProcessEvent(cur)
 	}
 }
 
