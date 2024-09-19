@@ -37,6 +37,7 @@ type ProcessInstanceEvent struct {
 	ProcessKey         int64
 	Version            int32
 	ProcessInstanceKey int64
+	State              string
 }
 
 type ElementInfo struct {

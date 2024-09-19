@@ -30,6 +30,7 @@ func (state *BpmnEngineState) exportEndProcessEvent(process ProcessInfo, process
 		ProcessKey:         process.ProcessKey,
 		Version:            process.Version,
 		ProcessInstanceKey: processInstance.InstanceKey,
+		State:              string(processInstance.State),
 	}
 	for _, exp := range state.exporters {
 		exp.EndProcessEvent(&event)
