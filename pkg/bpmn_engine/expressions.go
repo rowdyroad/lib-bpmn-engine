@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/antonmedv/expr"
+	"github.com/expr-lang/expr"
 	"github.com/nitram509/lib-bpmn-engine/pkg/bpmn_engine/var_holder"
 	"github.com/nitram509/lib-bpmn-engine/pkg/spec/BPMN20/extensions"
 )

@@ -3,7 +3,6 @@ module github.com/nitram509/lib-bpmn-engine
 go 1.20
 
 require (
-	github.com/antonmedv/expr v1.14.3
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/corbym/gocrest v1.0.5
 	github.com/hazelcast/hazelcast-go-client v1.4.1
@@ -12,6 +11,7 @@ require (
 )
 
 require (
+	github.com/expr-lang/expr v1.16.9 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
